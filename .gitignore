@@ -1,0 +1,21 @@
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local database and data
+chroma_db/
+.env
+
+# Streamlit
+.streamlit/
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
