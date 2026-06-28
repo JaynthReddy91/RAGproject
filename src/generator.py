@@ -3,6 +3,7 @@ from langchain_core.documents import Document as LCDocument
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_openai import ChatOpenAI
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 
 from src.config import Settings
 
@@ -55,6 +56,12 @@ class GeneratorManager:
                 openai_api_key=Settings.XAI_API_KEY,
                 base_url="https://api.x.ai/v1",
                 model=model_name,
+                temperature=0.0
+            )
+        elif provider == "ollama":
+            return ChatOllama(
+                model=model_name,
+                base_url="http://localhost:11434",
                 temperature=0.0
             )
         else:

@@ -22,43 +22,39 @@ def get_content_str(content) -> str:
         return "".join(text_parts).strip()
     return str(content).strip()
 
-# Test Q&A dataset based on our sample documents
+# Test Q&A dataset based on our calculus integration guide
 EVAL_DATASET = [
     {
-        "question": "What is the dimension of the embeddings and sub-layers in the Transformer encoder?",
-        "ground_truth": "All sub-layers in the model, as well as the embedding layers, produce outputs of dimension d_model = 512."
+        "question": "What is the constant multiple rule of integration?",
+        "ground_truth": "The constant multiple rule is that the integral of k * f(x) dx is equal to k times the integral of f(x) dx, where k is a constant."
     },
     {
-        "question": "How many layers are in the encoder and decoder stacks of the Transformer?",
-        "ground_truth": "The encoder and decoder are both composed of a stack of N = 6 identical layers."
+        "question": "What is the antiderivative of e^x?",
+        "ground_truth": "The antiderivative of e^x is e^x + C."
     },
     {
-        "question": "What is the formula for Scaled Dot-Product Attention?",
-        "ground_truth": "Attention(Q, K, V) = softmax((Q * K^T) / sqrt(d_k)) * V"
+        "question": "How does integration by substitution work?",
+        "ground_truth": "Integration by substitution is used when the integrand contains a function and its derivative. You set u = g(x), find du = g'(x) dx, substitute u and du into the integral, evaluate it, and substitute back."
     },
     {
-        "question": "Why does self-attention have an advantage over recurrence for long-range dependencies?",
-        "ground_truth": "Self-attention layers connect all positions with a constant number of sequentially executed operations, whereas recurrent layers require O(n) sequential operations, making it easier to learn long-range dependencies."
+        "question": "What are the priority guidelines for choosing u in integration by parts (LIATE)?",
+        "ground_truth": "LIATE stands for Logarithmic, Inverse trigonometric, Algebraic, Trigonometric, and Exponential functions (in order of priority for choosing u)."
     },
     {
-        "question": "What is Retrieval-Augmented Generation (RAG)?",
-        "ground_truth": "RAG is a technique that optimizes the output of a large language model (LLM) by referencing an authoritative knowledge base outside of its training data sources before generating a response."
+        "question": "Explain how to evaluate the integral of x * e^x.",
+        "ground_truth": "Using integration by parts with u = x and dv = e^x dx. This yields du = dx and v = e^x, giving the solution x*e^x - e^x + C."
     },
     {
-        "question": "What are the four major challenges of LLMs that RAG addresses?",
-        "ground_truth": "RAG addresses LLM hallucinations, stale training data, lack of authority/source verification, and security/access control limitations."
+        "question": "What is the result of evaluating the definite integral of sin(x) from 0 to pi?",
+        "ground_truth": "The antiderivative of sin(x) is -cos(x). Evaluated from 0 to pi, it equals -cos(pi) - (-cos(0)) = -(-1) - (-1) = 2."
     },
     {
-        "question": "What are the common text chunking strategies in RAG?",
-        "ground_truth": "Standard chunking strategies include fixed-size chunking, recursive character chunking, and semantic chunking."
+        "question": "How do you integrate 2x * cos(x^2)?",
+        "ground_truth": "Using u-substitution. Let u = x^2, du = 2x dx. The integral becomes the integral of cos(u) du, which is sin(u) + C = sin(x^2) + C."
     },
     {
-        "question": "What are the key advantages of RAG over fine-tuning?",
-        "ground_truth": "RAG is lower cost, allows dynamic real-time updates in the database, provides strict source citations, minimizes hallucinations, and supports simple access control."
-    },
-    {
-        "question": "When is fine-tuning preferred over RAG?",
-        "ground_truth": "Fine-tuning is preferred when adapting a model's style, tone, format outputs (like JSON), or specialized syntax, and for zero-shot efficiency to reduce input tokens."
+        "question": "What is the LIATE rule used for?",
+        "ground_truth": "The LIATE rule is a priority guide (Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential) used to choose the function 'u' in integration by parts."
     },
     {
         "question": "Who is the President of France?",

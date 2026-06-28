@@ -1,14 +1,12 @@
-# ⚡ Kortex RAG Pipeline
+# ⚡ Local Calculus Integrals RAG Pipeline
 
-Kortex RAG (Retrieval-Augmented Generation) is a premium, high-performance document intelligence pipeline designed to enable secure, conversational question answering over localized PDF, DOCX, and TXT/MD files. 
-
-Featuring hybrid search matching (BM25 + Vector Similarity), local cross-encoder re-ranking, and strict citation-only LLM generation, it provides clear, verifiable answers directly grounded in source documentation.
+A premium, high-performance RAG (Retrieval-Augmented Generation) pipeline running **fully locally and offline** using **Ollama** to answer and explain calculus integration questions based on a structured textbook knowledge base.
 
 ---
 
-## 🏗️ Architectural Schematic
+## 🏗️ Local System Architecture
 
-Below is the conceptual flowchart of the Kortex RAG Pipeline:
+Below is the conceptual flowchart of the local RAG pipeline:
 
 ```mermaid
 graph TD
@@ -19,18 +17,17 @@ graph TD
     classDef gen fill:#f472b6,stroke:#db2777,stroke-width:2px,color:#fff;
 
     %% Ingestion Stage
-    subgraph Ingestion ["1. Document Ingestion"]
-        A[Documents: PDF, DOCX, TXT, MD] --> B[DocumentLoader: Clean & Extract Text]
-        B --> C[TextChunker: Split Text]
-        C -- Recursive Splitting --> D[Recursive Chunks]
-        C -- Semantic Splitting --> E[Semantic Chunks]
+    subgraph Ingestion ["1. Offline Ingestion"]
+        A[Calculus Guides: PDF, DOCX, TXT] --> B[DocumentLoader: Clean & Extract Text]
+        B --> C[TextChunker: Recursive Splitting]
+        C --> D[Document Chunks]
     end
-    class A,B,C,D,E ingest;
+    class A,B,C,D ingest;
 
     %% Indexing Stage
     subgraph Indexing ["2. Storage & Indexing"]
-        D & E --> F[VectorStoreManager]
-        F -- Embeddings: Gemini/OpenAI/Local --> G[(ChromaDB Vector Store)]
+        D --> F[VectorStoreManager]
+        F -- Embeddings: Gemini API --> G[(ChromaDB Vector Store)]
         F -- Raw Text Indexing --> H[BM25 Index]
     end
     class F,G,H index;
@@ -47,12 +44,12 @@ graph TD
     class I,J,K,L,M,N search;
 
     %% Generation Stage
-    subgraph Generation ["4. LLM Generation"]
+    subgraph Generation ["4. Local LLM Generation"]
         N -- Top Reranked Context --> O[GeneratorManager]
         P[Chat History / Memory] --> Q[Query Rewriter]
         Q -- Standalone Search Query --> J
-        O -- System Prompts & Citations --> R[Chat LLM: Gemini/OpenAI/Grok]
-        R --> S[Verifiable Answer with Citations]
+        O -- System Prompts & Citations --> R[Local Chat LLM: Ollama Gemma 2]
+        R --> S[Calculus Solution with Citations]
     end
     class O,P,Q,R,S gen;
 ```
@@ -61,57 +58,54 @@ graph TD
 
 ## ⚡ Key Features
 
-* **Advanced Ingestion**: Robust loaders parsing text, pages, and metadata from PDF (PyMuPDF), DOCX (python-docx), and Markdown/text files.
+* **Calculus Integration Domain**: Pre-seeded with a comprehensive calculus integration guide (`data/calculus_integrals_guide.txt`) containing standard integral tables, rules, u-substitution, integration by parts, and solved examples.
+* **Fully Local LLM Integration**: Orchestrated with **Ollama** to run open-source models like `gemma2:2b` or `llama3` completely offline on your own machine.
+* **Database-Level Metadata Filtering**: Fine-grained queries filtered at the database level on ChromaDB and BM25.
 * **Hybrid Search (keyword + vector)**: Ensemble retriever merging BM25 and ChromaDB vector search scores.
-* **Database-Level Metadata Filtering**: Fine-grained query filtering on ChromaDB and BM25 to search only within selected target documents.
-* **Local Cross-Encoder Re-ranking**: Top search results are re-ordered using a sentence-transformer model (`ms-marco-MiniLM-L-6-v2`) to maximize relevance before LLM context packing.
-* **Orchestration & Query Rewriting**: Utilizes conversation history to reformulate follow-up questions into standalone queries.
-* **Multi-LLM Integration**: Seamlessly switch between Gemini (using LangChain Google GenAI), OpenAI, and Grok/xAI models.
-* **Streamlit UI**: Premium interface with custom glassmorphism styles, dynamic filters, document upload, and expanding citation inspector.
-* **LLM-As-A-Judge Evaluation**: Integrated benchmarking suite measuring system latency, Faithfulness, Relevance, and Correctness.
+* **Streamlit UI**: Custom dashboard with glassmorphism layout, sidebar uploader, checklists, and expanding citation inspector.
+* **LLM-As-A-Judge Evaluation**: Integrated benchmarking suite measuring system latency and scores (Faithfulness, Relevance, Correctness).
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Local Setup & Execution Guide
 
-### 1. Installation
-Ensure python 3.10+ is installed. Clone the repository and install the dependencies:
-```bash
+### 1. Prerequisites (Ollama Installation)
+1. Download and install **Ollama** for Windows from **[ollama.com](https://ollama.com)**.
+2. Once installed, download the lightweight Google Gemma 2 (2.6B) model by running this command in your PowerShell or Command Prompt:
+   ```powershell
+   ollama pull gemma2:2b
+   ```
+
+### 2. Installation of Python Dependencies
+Install the required packages in your local virtual environment:
+```powershell
 pip install -r requirements.txt
 ```
 
-### 2. Configuration Setup
+### 3. Configuration Setup
 Create a `.env` file in the root directory (based on `.env.example`):
 ```env
-LLM_PROVIDER=gemini
-LLM_MODEL=gemini-2.5-flash
+LLM_PROVIDER=ollama
+LLM_MODEL=gemma2:2b
 EMBEDDING_PROVIDER=gemini
 EMBEDDING_MODEL=models/gemini-embedding-2
 GEMINI_API_KEY=your_gemini_api_key_here
-
-# For OpenAI configurations
-# OPENAI_API_KEY=your_openai_key_here
-
-# For Grok configurations
-# LLM_PROVIDER=grok
-# LLM_MODEL=grok-2-1212
-# XAI_API_KEY=your_grok_key_here
 ```
 
-### 3. Bootstrap & Index Database
-Place your text, markdown, docx, or pdf documents in the `data/` directory. Run the indexing script to build your knowledge base:
-```bash
+### 4. Index Knowledge Base
+Index the Calculus Integration reference files into ChromaDB:
+```powershell
 python -m src.index_all
 ```
 
-### 4. Run Benchmarks
-Verify latency and response alignment against the pre-configured QA benchmark dataset:
-```bash
+### 5. Run Performance Benchmarks
+To test response alignment and latency metrics against the Calculus integrals dataset:
+```powershell
 python -m src.evaluate
 ```
 
-### 5. Launch the Web Application
-Start the Streamlit interactive dashboard:
-```bash
+### 6. Launch the Web Application
+Start the Streamlit integration solver interface:
+```powershell
 streamlit run app.py
 ```

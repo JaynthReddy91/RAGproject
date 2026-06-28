@@ -1,0 +1,112 @@
+# Calculus Integration Guide: Rules, Methods, and Solved Problems
+
+Integration is a fundamental concept in calculus representing the area under a curve, accumulation of quantities, or the reverse operation of differentiation (antiderivative).
+
+---
+
+## 1. Types of Integrals
+
+### A. Indefinite Integrals
+An indefinite integral represents a family of functions (antiderivatives) and always includes a constant of integration, $C$.
+$$\int f(x) \, dx = F(x) + C \quad \text{where} \quad F'(x) = f(x)$$
+
+### B. Definite Integrals
+A definite integral has upper and lower limits ($a$ and $b$) and represents the net signed area bounded by the curve $f(x)$, the x-axis, and the vertical lines $x = a$ and $x = b$.
+$$\int_{a}^{b} f(x) \, dx = [F(x)]_{a}^{b} = F(b) - F(a) \quad \text{(Fundamental Theorem of Calculus)}$$
+
+---
+
+## 2. Fundamental Rules of Integration
+
+* **Constant Multiple Rule**: $\int k \cdot f(x) \, dx = k \int f(x) \, dx$
+* **Sum and Difference Rule**: $\int [f(x) \pm g(x)] \, dx = \int f(x) \, dx \pm \int g(x) \, dx$
+* **Power Rule**: $\int x^n \, dx = \frac{x^{n+1}}{n+1} + C \quad (\text{for } n \neq -1)$
+* **Logarithmic Form**: $\int \frac{1}{x} \, dx = \ln|x| + C$
+
+---
+
+## 3. Table of Standard Integrals
+
+| Function $f(x)$ | Antiderivative $\int f(x) \, dx$ |
+| :--- | :--- |
+| $e^x$ | $e^x + C$ |
+| $a^x$ | $\frac{a^x}{\ln(a)} + C$ |
+| $\sin(x)$ | $-\cos(x) + C$ |
+| $\cos(x)$ | $\sin(x) + C$ |
+| $\sec^2(x)$ | $\tan(x) + C$ |
+| $\csc^2(x)$ | $-\cot(x) + C$ |
+| $\sec(x)\tan(x)$ | $\sec(x) + C$ |
+| $\csc(x)\cot(x)$ | $-\csc(x) + C$ |
+| $\frac{1}{\sqrt{1-x^2}}$ | $\arcsin(x) + C$ |
+| $\frac{1}{1+x^2}$ | $\arctan(x) + C$ |
+| $\frac{1}{|x|\sqrt{x^2-1}}$ | $\text{arcsec}(x) + C$ |
+
+---
+
+## 4. Advanced Integration Methods
+
+### A. Integration by Substitution (U-Substitution)
+Used when the integrand contains a function and its derivative.
+* **Method**:
+  1. Identify a part of the integrand to set as $u = g(x)$.
+  2. Find $du = g'(x) \, dx$.
+  3. Substitute $u$ and $du$ into the integral, evaluate, and substitute back.
+* **Example**: Evaluate $\int 2x \cos(x^2) \, dx$.
+  - Let $u = x^2$, then $du = 2x \, dx$.
+  - The integral becomes: $\int \cos(u) \, du = \sin(u) + C$.
+  - Substitute back: $\sin(x^2) + C$.
+
+### B. Integration by Parts
+Based on the product rule of differentiation: $\int u \, dv = u v - \int v \, du$.
+* **LIATE Rule** for choosing $u$ (in order of priority):
+  1. **L** - Logarithmic functions (e.g., $\ln(x)$)
+  2. **I** - Inverse trigonometric functions (e.g., $\arctan(x)$)
+  3. **A** - Algebraic functions (e.g., $x^2$, $3x$)
+  4. **T** - Trigonometric functions (e.g., $\sin(x)$)
+  5. **E** - Exponential functions (e.g., $e^x$)
+
+* **Example**: Evaluate $\int x \cos(x) \, dx$.
+  - Using LIATE, choose $u = x$ (Algebraic) and $dv = \cos(x) \, dx$ (Trigonometric).
+  - Calculate $du = 1 \, dx$ and $v = \sin(x)$.
+  - Apply formula: $x \sin(x) - \int \sin(x) \, dx = x \sin(x) - (-\cos(x)) + C = x \sin(x) + \cos(x) + C$.
+
+### C. Integration by Partial Fractions
+Used to integrate rational expressions $\frac{P(x)}{Q(x)}$ where the degree of the numerator is less than the denominator.
+* **Method**:
+  1. Factor the denominator $Q(x)$.
+  2. Split into partial fraction terms: e.g., $\frac{1}{(x-a)(x-b)} = \frac{A}{x-a} + \frac{B}{x-b}$.
+  3. Solve for coefficients $A$ and $B$, then integrate terms individually.
+
+---
+
+## 5. Solved Integration Questions
+
+### Question 1: Find the integral of $\int x e^{x} \, dx$.
+* **Type**: Integration by parts.
+* **Step-by-step Solution**:
+  1. Let $u = x$ and $dv = e^x \, dx$ (by LIATE).
+  2. Then, $du = dx$ and $v = e^x$.
+  3. Apply integration by parts formula:
+     $$\int x e^x \, dx = x e^x - \int e^x \, dx$$
+  4. Evaluate the remaining integral:
+     $$\int x e^x \, dx = x e^x - e^x + C = e^x(x - 1) + C$$
+
+### Question 2: Evaluate $\int \frac{\ln(x)}{x} \, dx$.
+* **Type**: Integration by substitution.
+* **Step-by-step Solution**:
+  1. Let $u = \ln(x)$.
+  2. Calculate the differential: $du = \frac{1}{x} \, dx$.
+  3. Substitute into the integral:
+     $$\int u \, du = \frac{u^2}{2} + C$$
+  4. Substitute back $u = \ln(x)$:
+     $$\int \frac{\ln(x)}{x} \, dx = \frac{(\ln(x))^2}{2} + C$$
+
+### Question 3: Find the definite integral $\int_{0}^{\pi} \sin(x) \, dx$.
+* **Type**: Definite integral.
+* **Step-by-step Solution**:
+  1. Find the antiderivative: $\int \sin(x) \, dx = -\cos(x)$.
+  2. Apply the limits of integration:
+     $$[-\cos(x)]_{0}^{\pi} = -\cos(\pi) - (-\cos(0))$$
+  3. Substitute values ($\cos(\pi) = -1$, $\cos(0) = 1$):
+     $$-(-1) - (-1) = 1 + 1 = 2$$
+  4. The definite integral is $2$.
