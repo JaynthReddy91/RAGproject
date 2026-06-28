@@ -1,124 +1,117 @@
-# Kortex RAG: Modular & High-Performance Knowledge Pipeline
+# ⚡ Kortex RAG Pipeline
 
-Kortex RAG is a Retrieval-Augmented Generation (RAG) system built with **Python**, **LangChain**, and **Streamlit**. It implements advanced document preprocessing, hybrid lexical-vector retrieval, local cross-encoder re-ranking, and conversational memory with precise inline citations.
+Kortex RAG (Retrieval-Augmented Generation) is a premium, high-performance document intelligence pipeline designed to enable secure, conversational question answering over localized PDF, DOCX, and TXT/MD files. 
+
+Featuring hybrid search matching (BM25 + Vector Similarity), local cross-encoder re-ranking, and strict citation-only LLM generation, it provides clear, verifiable answers directly grounded in source documentation.
 
 ---
 
-## ⚡ Architecture Diagram
+## 🏗️ Architectural Schematic
+
+Below is the conceptual flowchart of the Kortex RAG Pipeline:
 
 ```mermaid
 graph TD
-    A[Documents: PDF, DOCX, TXT] --> B[loader.py: PyMuPDF / docx / txt]
-    B --> C[chunker.py: Fixed / Recursive / Semantic]
-    C --> D[vectorstore.py: ChromaDB Indexing]
-    C --> E[retriever.py: BM25 Lexical Indexing]
-    
-    F[User Query] --> G[retriever.py: Hybrid Search & Re-ranking]
-    D --> G
-    E --> G
-    
-    G --> H[generator.py: Prompt + Memory + Context]
-    H --> I[LLM: OpenAI / Gemini / Grok]
-    I --> J[Streamlit app.py: Output with Citations]
+    %% Styling
+    classDef ingest fill:#a78bfa,stroke:#6d28d9,stroke-width:2px,color:#fff;
+    classDef index fill:#38bdf8,stroke:#0284c7,stroke-width:2px,color:#fff;
+    classDef search fill:#34d399,stroke:#059669,stroke-width:2px,color:#fff;
+    classDef gen fill:#f472b6,stroke:#db2777,stroke-width:2px,color:#fff;
+
+    %% Ingestion Stage
+    subgraph Ingestion ["1. Document Ingestion"]
+        A[Documents: PDF, DOCX, TXT, MD] --> B[DocumentLoader: Clean & Extract Text]
+        B --> C[TextChunker: Split Text]
+        C -- Recursive Splitting --> D[Recursive Chunks]
+        C -- Semantic Splitting --> E[Semantic Chunks]
+    end
+    class A,B,C,D,E ingest;
+
+    %% Indexing Stage
+    subgraph Indexing ["2. Storage & Indexing"]
+        D & E --> F[VectorStoreManager]
+        F -- Embeddings: Gemini/OpenAI/Local --> G[(ChromaDB Vector Store)]
+        F -- Raw Text Indexing --> H[BM25 Index]
+    end
+    class F,G,H index;
+
+    %% Retrieval Stage
+    subgraph Retrieval ["3. Retrieval Engine"]
+        I[User Query] --> J[HybridRetrieverManager]
+        J --> K[Chroma Similarity Search]
+        J --> L[BM25 Keyword Search]
+        K -- Candidate Documents --> M[Ensemble Retriever]
+        L -- Candidate Documents --> M
+        M --> N[CrossEncoder Local Re-ranker]
+    end
+    class I,J,K,L,M,N search;
+
+    %% Generation Stage
+    subgraph Generation ["4. LLM Generation"]
+        N -- Top Reranked Context --> O[GeneratorManager]
+        P[Chat History / Memory] --> Q[Query Rewriter]
+        Q -- Standalone Search Query --> J
+        O -- System Prompts & Citations --> R[Chat LLM: Gemini/OpenAI/Grok]
+        R --> S[Verifiable Answer with Citations]
+    end
+    class O,P,Q,R,S gen;
 ```
 
 ---
 
-## 📁 Repository Structure
+## ⚡ Key Features
 
-```
-RAGproject/
-├── data/                      # Sample training/reference text documents
-├── src/
-│   ├── __init__.py
-│   ├── config.py              # Configuration & env variable manager
-│   ├── loader.py              # Document loaders (PDF, DOCX, TXT)
-│   ├── chunker.py             # Chunking strategies (Fixed, Recursive, Semantic)
-│   ├── vectorstore.py         # Vector database manager (ChromaDB)
-│   ├── retriever.py           # Hybrid search + Re-ranking
-│   ├── generator.py           # RAG chain, memory, and LLM orchestration
-│   ├── evaluate.py            # Latency and response quality evaluator
-│   └── index_all.py           # Pre-indexing bootstrapper
-├── app.py                     # Streamlit frontend dashboard
-├── requirements.txt           # Python dependencies
-├── .gitignore                 # Excludes local environments and database files
-└── README.md                  # System documentation
-```
+* **Advanced Ingestion**: Robust loaders parsing text, pages, and metadata from PDF (PyMuPDF), DOCX (python-docx), and Markdown/text files.
+* **Hybrid Search (keyword + vector)**: Ensemble retriever merging BM25 and ChromaDB vector search scores.
+* **Database-Level Metadata Filtering**: Fine-grained query filtering on ChromaDB and BM25 to search only within selected target documents.
+* **Local Cross-Encoder Re-ranking**: Top search results are re-ordered using a sentence-transformer model (`ms-marco-MiniLM-L-6-v2`) to maximize relevance before LLM context packing.
+* **Orchestration & Query Rewriting**: Utilizes conversation history to reformulate follow-up questions into standalone queries.
+* **Multi-LLM Integration**: Seamlessly switch between Gemini (using LangChain Google GenAI), OpenAI, and Grok/xAI models.
+* **Streamlit UI**: Premium interface with custom glassmorphism styles, dynamic filters, document upload, and expanding citation inspector.
+* **LLM-As-A-Judge Evaluation**: Integrated benchmarking suite measuring system latency, Faithfulness, Relevance, and Correctness.
 
 ---
 
-## 🚀 Setup & Execution Guide
+## 🚀 Getting Started
 
-### 1. Prerequisites & Virtual Environment
-Ensure you have Python 3.10+ installed.
-
-```powershell
-# Create virtual environment
-python -m venv .venv
-
-# Activate virtual environment (Windows Powershell)
-.venv\Scripts\Activate.ps1
-
-# Install project dependencies
+### 1. Installation
+Ensure python 3.10+ is installed. Clone the repository and install the dependencies:
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment Variables
+### 2. Configuration Setup
 Create a `.env` file in the root directory (based on `.env.example`):
-
 ```env
-# LLM Provider Configuration (options: gemini, openai, xai, grok)
 LLM_PROVIDER=gemini
-
-# API Keys (Provide at least the one corresponding to LLM_PROVIDER)
+LLM_MODEL=gemini-2.5-flash
+EMBEDDING_PROVIDER=gemini
+EMBEDDING_MODEL=models/gemini-embedding-2
 GEMINI_API_KEY=your_gemini_api_key_here
-# OPENAI_API_KEY=your_openai_api_key_here
-# XAI_API_KEY=your_grok_api_key_here
 
-# Model Selection
-LLM_MODEL=gemini-1.5-flash
+# For OpenAI configurations
+# OPENAI_API_KEY=your_openai_key_here
 
-# Embeddings (options: local, openai)
-EMBEDDING_PROVIDER=local
-EMBEDDING_MODEL=all-MiniLM-L6-v2
-
-# Storage & Retrieval Settings
-CHROMA_DB_PATH=./chroma_db
-CHUNK_SIZE=1000
-CHUNK_OVERLAP=200
+# For Grok configurations
+# LLM_PROVIDER=grok
+# LLM_MODEL=grok-2-1212
+# XAI_API_KEY=your_grok_key_here
 ```
 
-### 3. Bootstrap and Index Knowledge Base
-To index the sample files located in `data/` into ChromaDB:
-
-```powershell
-python src/index_all.py
+### 3. Bootstrap & Index Database
+Place your text, markdown, docx, or pdf documents in the `data/` directory. Run the indexing script to build your knowledge base:
+```bash
+python -m src.index_all
 ```
 
-### 4. Launch the Streamlit Frontend Dashboard
-Start the Streamlit web application:
+### 4. Run Benchmarks
+Verify latency and response alignment against the pre-configured QA benchmark dataset:
+```bash
+python -m src.evaluate
+```
 
-```powershell
+### 5. Launch the Web Application
+Start the Streamlit interactive dashboard:
+```bash
 streamlit run app.py
 ```
-
----
-
-## 🧪 Evaluation Suite
-
-The pipeline features a testing script that benchmarks system latency and evaluates LLM outputs for **Faithfulness**, **Relevance**, and **Correctness** using an LLM-as-a-judge system:
-
-```powershell
-python src/evaluate.py
-```
-*Outputs are printed to the console and written to `evaluation_report.json`.*
-
----
-
-## ✨ Features Checklist
-- [x] **Multi-format Ingestion:** Load PDF, DOCX, and TXT files with page-level metadata.
-- [x] **Advanced Chunking:** Switch between fixed-size, structural recursive, and semantic text chunk splitting.
-- [x] **Hybrid Retrieval:** Merge keyword index retrieval (BM25) and vector similarity (ChromaDB) search.
-- [x] **Local Re-ranking:** Reorder retrieved passages using a Cross-Encoder model (`cross-encoder/ms-marco-MiniLM-L-6-v2`).
-- [x] **Conversational Memory:** Preserve dialog context with query rewriting for follow-up questions.
-- [x] **Inline Citations:** Highlight sources and exact excerpts with custom UI cards.
