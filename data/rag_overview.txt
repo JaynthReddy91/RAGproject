@@ -1,0 +1,36 @@
+Title: Retrieval-Augmented Generation (RAG) Systems - An Overview
+Author: AI Engineering Best Practices Group
+
+Retrieval-Augmented Generation (RAG) is a technique that optimizes the output of a large language model (LLM) by referencing an authoritative knowledge base outside of its training data sources before generating a response. LLMs are trained on vast volumes of data and use billions of parameters to generate original text for tasks like answering questions, translating languages, and completing sentences. RAG extends the already powerful capabilities of LLMs to specific domains or an organization's internal knowledge base, all without the need to retrain or fine-tune the model. It is a cost-effective approach to improving LLM output so it remains relevant, accurate, and useful in various contexts.
+
+Why is RAG Important?
+LLMs are a key technology in artificial intelligence, power chatbots, search engines, and document analyzers. However, they suffer from several notable weaknesses:
+1. Hallucination: They can provide incorrect but plausible-sounding answers when they lack information.
+2. Stale training data: LLM knowledge is frozen at the moment training completes. They cannot natively answer questions about recent events.
+3. Lack of authority: LLMs do not inherently know the sources of their knowledge, making it difficult to verify their responses.
+4. Security/Access control: It is hard to restrict an LLM from speaking about sensitive information once it is baked into its parameters.
+
+RAG addresses these challenges by retrieving relevant documents from a database based on the user's query, and then appending those documents as context in the prompt sent to the LLM. The LLM is instructed to rely solely on the provided context to answer, thereby dramatically reducing hallucinations, incorporating up-to-date data, providing clear citations, and allowing dynamic data access filters.
+
+Key Components of a RAG Pipeline:
+
+1. Ingestion:
+During ingestion, raw documents (such as PDFs, Word files, HTML, or Markdown text) are collected. They are parsed to extract raw text, along with metadata such as the filename, page number, author, and date created.
+
+2. Chunking:
+To feed text to an LLM or an embedding model, documents must be broken down into smaller pieces called chunks. Standard chunking strategies include:
+- Fixed-size chunking: Splitting text at exact character or token counts.
+- Recursive character chunking: Splitting text using hierarchical separators (like double newlines, single newlines, or spaces) to keep paragraphs and sentences intact.
+- Semantic chunking: Computing embeddings for sentences and splitting where the semantic distance between consecutive sentences exceeds a statistical threshold.
+
+3. Embeddings:
+A mathematical model (such as OpenAI's text-embedding-3-small or sentence-transformers/all-MiniLM-L6-v2) converts text chunks into high-dimensional numerical vectors (embeddings). These vectors represent the semantic meaning of the text.
+
+4. Vector Database:
+The embeddings, along with their text and metadata, are stored in a specialized database (like ChromaDB, FAISS, Pinecone, or Milvus). The vector database creates indices to support fast nearest-neighbor calculations using metrics like cosine similarity or Euclidean distance.
+
+5. Retrieval:
+When a user asks a question, the question is embedded using the same embedding model. The vector database retrieves the top-k document chunks whose embeddings are closest to the query embedding. Advanced retrieval systems combine this similarity search with keyword search (BM25) using an EnsembleRetriever (hybrid search), and then re-rank results using a Cross-Encoder model.
+
+6. Generation:
+The retrieved document chunks are formatted into a prompt containing the user query. The prompt is sent to a large language model (e.g. GPT-4, Gemini 1.5 Pro). The LLM processes the instructions, extracts answers from the context, and generates the final output, citing the references correctly.
