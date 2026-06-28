@@ -19,6 +19,7 @@ class Settings:
     LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+    XAI_API_KEY = os.getenv("XAI_API_KEY", "")
     LLM_MODEL = os.getenv("LLM_MODEL", "gemini-1.5-flash")
 
     # Embeddings Settings
@@ -47,6 +48,10 @@ class Settings:
             print("WARNING: OPENAI_API_KEY is not set but openai is selected as LLM provider.")
         elif cls.LLM_PROVIDER == "gemini" and not cls.GEMINI_API_KEY:
             print("WARNING: GEMINI_API_KEY is not set but gemini is selected as LLM provider.")
+        elif cls.LLM_PROVIDER in ["xai", "grok"] and not cls.XAI_API_KEY:
+            print("WARNING: XAI_API_KEY is not set but xai/grok is selected as LLM provider.")
         
         if cls.EMBEDDING_PROVIDER == "openai" and not cls.OPENAI_API_KEY:
             print("WARNING: OPENAI_API_KEY is not set but openai is selected as embedding provider.")
+        elif cls.EMBEDDING_PROVIDER == "gemini" and not cls.GEMINI_API_KEY:
+            print("WARNING: GEMINI_API_KEY is not set but gemini is selected as embedding provider.")
