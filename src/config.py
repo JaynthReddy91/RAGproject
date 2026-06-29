@@ -20,7 +20,7 @@ class Settings:
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     XAI_API_KEY = os.getenv("XAI_API_KEY", "")
-    LLM_MODEL = os.getenv("LLM_MODEL", "gemini-1.5-flash")
+    LLM_MODEL = os.getenv("LLM_MODEL", "gemma2:2b" if os.getenv("LLM_PROVIDER", "").lower() == "ollama" else "gemini-1.5-flash")
 
     # Embeddings Settings
     EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "local").lower()
@@ -50,8 +50,12 @@ class Settings:
             print("WARNING: GEMINI_API_KEY is not set but gemini is selected as LLM provider.")
         elif cls.LLM_PROVIDER in ["xai", "grok"] and not cls.XAI_API_KEY:
             print("WARNING: XAI_API_KEY is not set but xai/grok is selected as LLM provider.")
+        elif cls.LLM_PROVIDER == "ollama":
+            pass # Ollama is local, no API key required
         
         if cls.EMBEDDING_PROVIDER == "openai" and not cls.OPENAI_API_KEY:
             print("WARNING: OPENAI_API_KEY is not set but openai is selected as embedding provider.")
         elif cls.EMBEDDING_PROVIDER == "gemini" and not cls.GEMINI_API_KEY:
             print("WARNING: GEMINI_API_KEY is not set but gemini is selected as embedding provider.")
+        elif cls.EMBEDDING_PROVIDER == "local":
+            pass # Local HuggingFace embeddings do not require API keys

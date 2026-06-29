@@ -1,0 +1,121 @@
+{
+  "total_questions": 9,
+  "averages": {
+    "retrieval_latency_sec": 0.05324604776170519,
+    "generation_latency_sec": 19.7485322687361,
+    "total_latency_sec": 19.801778316497803,
+    "faithfulness_score": 4.555555555555555,
+    "relevance_score": 4.666666666666667,
+    "correctness_score": 4.777777777777778
+  },
+  "detailed_results": [
+    {
+      "question": "What is the constant multiple rule of integration?",
+      "ground_truth": "The constant multiple rule is that the integral of k * f(x) dx is equal to k times the integral of f(x) dx, where k is a constant.",
+      "generated_answer": "The constant multiple rule is: $\\int k \\cdot f(x) \\, dx = k \\int f(x) \\, dx$ [Doc ID 3]",
+      "retrieval_time_sec": 0.13385534286499023,
+      "generation_time_sec": 21.338031768798828,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "What is the antiderivative of e^x?",
+      "ground_truth": "The antiderivative of e^x is e^x + C.",
+      "generated_answer": "The antiderivative of $e^x$ is $e^x + C$.  [Doc ID 1]",
+      "retrieval_time_sec": 0.02193760871887207,
+      "generation_time_sec": 17.172544240951538,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "How does integration by substitution work?",
+      "ground_truth": "Integration by substitution is used when the integrand contains a function and its derivative. You set u = g(x), find du = g'(x) dx, substitute u and du into the integral, evaluate it, and substitute back.",
+      "generated_answer": "Integration by substitution works when the integrand contains a function and its derivative.  \n* **Method**:\n1. Identify a part of the integrand to set as $u = g(x)$.\n2. Find $du = g'(x) \\, dx$.\n3. Substitute $u$ and $du$ into the integral, evaluate, and substitute back. \n[Doc ID 2]",
+      "retrieval_time_sec": 0.07183003425598145,
+      "generation_time_sec": 21.95940113067627,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "What are the priority guidelines for choosing u in integration by parts (LIATE)?",
+      "ground_truth": "LIATE stands for Logarithmic, Inverse trigonometric, Algebraic, Trigonometric, and Exponential functions (in order of priority for choosing u).",
+      "generated_answer": "The LIATE rule for choosing $u$ in integration by parts prioritizes the following order: \n1. **L** - Logarithmic functions (e.g., $\\ln(x)$)\n2. **I** - Inverse trigonometric functions (e.g., $\\arct\n3. **A** - Algebraic functions (e.g., $x^2$, $3x$)\n4. **T** - Trigonometric functions (e.g., $\\sin(x)$) \n5. **E** - Exponential functions (e.g., $e^x$)",
+      "retrieval_time_sec": 0.08188056945800781,
+      "generation_time_sec": 24.09986686706543,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "Explain how to evaluate the integral of x * e^x.",
+      "ground_truth": "Using integration by parts with u = x and dv = e^x dx. This yields du = dx and v = e^x, giving the solution x*e^x - e^x + C.",
+      "generated_answer": "To evaluate the integral of $x e^x$, use integration by parts. \n* Let $u = x$ and $dv = e^x \\, dx$.  \n* Then, $du = dx$ and $v = e^x$. \n* Apply the integration by parts formula: $\\int x e^x \\, dx = x e^x - \\int e^x \\, dx$. \n* Evaluate the remaining integral: $\\int x e^x \\, dx = x e^x - e^x + C = e^x(x-1) + C$ .",
+      "retrieval_time_sec": 0.0317227840423584,
+      "generation_time_sec": 28.683039665222168,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "What is the result of evaluating the definite integral of sin(x) from 0 to pi?",
+      "ground_truth": "The antiderivative of sin(x) is -cos(x). Evaluated from 0 to pi, it equals -cos(pi) - (-cos(0)) = -(-1) - (-1) = 2.",
+      "generated_answer": "The definite integral of sin(x) from 0 to \u03c0 is 2. [Doc ID 1]",
+      "retrieval_time_sec": 0.03259539604187012,
+      "generation_time_sec": 14.618155241012573,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "How do you integrate 2x * cos(x^2)?",
+      "ground_truth": "Using u-substitution. Let u = x^2, du = 2x dx. The integral becomes the integral of cos(u) du, which is sin(u) + C = sin(x^2) + C.",
+      "generated_answer": "To integrate $2x\\cos(x^2)$, use substitution. Let $u = x^2$, then $du = 2x \\, dx$.  The integral becomes $\\int \\cos(u) \\, du = \\sin(u) + C = \\boxed{\\sin(x^2) + C}$.",
+      "retrieval_time_sec": 0.03713083267211914,
+      "generation_time_sec": 18.485862016677856,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "What is the LIATE rule used for?",
+      "ground_truth": "The LIATE rule is a priority guide (Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential) used to choose the function 'u' in integration by parts.",
+      "generated_answer": "The LIATE rule is used for choosing the part of a product to be u in integration by parts.  It prioritizes functions based on their type and helps determine which function will be chosen as u, then v. \n[Doc ID 2]",
+      "retrieval_time_sec": 0.031809091567993164,
+      "generation_time_sec": 16.932997226715088,
+      "scores": {
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
+      }
+    },
+    {
+      "question": "Who is the President of France?",
+      "ground_truth": "Not present in the documents. System should say: 'I am sorry, but the provided documents do not contain the information required to answer this question.'",
+      "generated_answer": "I am sorry, but the provided documents do not contain the information required to answer this question.",
+      "retrieval_time_sec": 0.0364527702331543,
+      "generation_time_sec": 14.446892261505127,
+      "scores": {
+        "faithfulness": 1.0,
+        "relevance": 2.0,
+        "correctness": 3.0
+      }
+    }
+  ]
+}

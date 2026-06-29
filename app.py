@@ -285,24 +285,7 @@ with chat_container:
         with st.chat_message(role):
             st.write(content)
             
-            # If assistant answer, display citations if available
-            if role == "assistant" and "docs" in chat and chat["docs"]:
-                with st.expander("🔍 Citations & Source Excerpts", expanded=False):
-                    for idx, doc in enumerate(chat["docs"]):
-                        src = doc.metadata.get("source", "unknown")
-                        page = doc.metadata.get("page", "?")
-                        excerpt = doc.page_content
-                        
-                        st.markdown(f"""
-                        <div class="glass-card" style="margin-bottom: 0.75rem; padding: 0.75rem;">
-                            <div class="citation-header">
-                                📄 [Doc ID {idx+1}] {src} — Page {page}
-                            </div>
-                            <div class="citation-body">
-                                "{excerpt}"
-                            </div>
-                        </div>
-                        """, unsafe_allow_html=True)
+            # Removed citation drawer for a cleaner interface
 
 # User Chat Input
 if prompt := st.chat_input("Ask a question about your documents..."):
@@ -333,24 +316,7 @@ if prompt := st.chat_input("Ask a question about your documents..."):
         # E. Render response
         st.write(answer)
         
-        # F. Render citations if documents were retrieved
-        if filtered_docs:
-            with st.expander("🔍 Citations & Source Excerpts", expanded=False):
-                for idx, doc in enumerate(filtered_docs):
-                    src = doc.metadata.get("source", "unknown")
-                    page = doc.metadata.get("page", "?")
-                    excerpt = doc.page_content
-                    
-                    st.markdown(f"""
-                    <div class="glass-card" style="margin-bottom: 0.75rem; padding: 0.75rem;">
-                        <div class="citation-header">
-                            📄 [Doc ID {idx+1}] {src} — Page {page}
-                        </div>
-                        <div class="citation-body">
-                            "{excerpt}"
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
+        # Removed citation drawer for a cleaner interface
                     
     # Save assistant response to state
     st.session_state.chat_history.append({
