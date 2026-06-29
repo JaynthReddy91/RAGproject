@@ -125,10 +125,21 @@ Format your output EXACTLY as this JSON block (do not return any other text or m
 }}
 """
         try:
-            response = self.judge_llm.invoke([
-                SystemMessage(content="You are a strict, objective quality control evaluator. Always output clean JSON."),
-                HumanMessage(content=judge_prompt)
-            ])
+            try:
+                response = self.judge_llm.invoke([
+                    SystemMessage(content="You are a strict, objective quality control evaluator. Always output clean JSON."),
+                    HumanMessage(content=judge_prompt)
+                ])
+            except Exception as err:
+                if self.judge_llm != self.llm:
+                    print(f"Error calling judge LLM ({err}). Falling back to generator model...")
+                    response = self.llm.invoke([
+                        SystemMessage(content="You are a strict, objective quality control evaluator. Always output clean JSON."),
+                        HumanMessage(content=judge_prompt)
+                    ])
+                else:
+                    raise err
+
             content = get_content_str(response.content)
             
             # Clean up JSON if LLM returned markdown wrappers

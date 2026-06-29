@@ -10,8 +10,8 @@ from src.generator import GeneratorManager
 
 # Initialize Streamlit Page Config
 st.set_page_config(
-    page_title="Kortex RAG Pipeline",
-    page_icon="⚡",
+    page_title="RAG Pipeline",
+    page_icon="😒",
     layout="wide",
     initial_sidebar_state="expanded"
 )
