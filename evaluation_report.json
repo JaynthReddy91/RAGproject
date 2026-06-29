@@ -1,120 +1,120 @@
 {
   "total_questions": 9,
   "averages": {
-    "retrieval_latency_sec": 0.02843695216708713,
-    "generation_latency_sec": 10.919622818628946,
-    "total_latency_sec": 10.948059770796034,
-    "faithfulness_score": 1.0,
-    "relevance_score": 1.0,
-    "correctness_score": 1.0
+    "retrieval_latency_sec": 0.045949988894992404,
+    "generation_latency_sec": 9.183875348832872,
+    "total_latency_sec": 9.229825337727865,
+    "faithfulness_score": 4.555555555555555,
+    "relevance_score": 4.666666666666667,
+    "correctness_score": 4.777777777777778
   },
   "detailed_results": [
     {
       "question": "What is the constant multiple rule of integration?",
       "ground_truth": "The constant multiple rule is that the integral of k * f(x) dx is equal to k times the integral of f(x) dx, where k is a constant.",
-      "generated_answer": "The constant multiple rule states that $\\int k \\cdot f(x) \\, dx = k \\int f(x) \\, dx$ where $k$ is a constant. [Doc ID 1]",
-      "retrieval_time_sec": 0.044733285903930664,
-      "generation_time_sec": 15.955281496047974,
+      "generated_answer": "The constant multiple rule of integration states that $\\int k \\cdot f(x) \\, dx = k \\int f(x) \\, dx$ [Doc ID 1].",
+      "retrieval_time_sec": 0.1738910675048828,
+      "generation_time_sec": 9.107094526290894,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "What is the antiderivative of e^x?",
       "ground_truth": "The antiderivative of e^x is e^x + C.",
-      "generated_answer": "The antiderivative of $e^x$ is $e^x + C$.  [Doc ID 1]",
-      "retrieval_time_sec": 0.03181052207946777,
-      "generation_time_sec": 8.392532587051392,
+      "generated_answer": "The antiderivative of $e^x$ is  $e^x + C$. [Doc ID 1]",
+      "retrieval_time_sec": 0.02046823501586914,
+      "generation_time_sec": 6.522052049636841,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "How does integration by substitution work?",
       "ground_truth": "Integration by substitution is used when the integrand contains a function and its derivative. You set u = g(x), find du = g'(x) dx, substitute u and du into the integral, evaluate it, and substitute back.",
       "generated_answer": "Integration by substitution works as follows:  First, identify a part of the integrand to set as $u = g(x)$. Then find $du = g'(x) \\, dx$. Substitute $u$ and $du$ into the integral, evaluate, and substitute back. [Doc ID 1]",
-      "retrieval_time_sec": 0.02146458625793457,
-      "generation_time_sec": 10.096864938735962,
+      "retrieval_time_sec": 0.020212411880493164,
+      "generation_time_sec": 9.068669557571411,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "What are the priority guidelines for choosing u in integration by parts (LIATE)?",
       "ground_truth": "LIATE stands for Logarithmic, Inverse trigonometric, Algebraic, Trigonometric, and Exponential functions (in order of priority for choosing u).",
       "generated_answer": "The LIATE rule for choosing $u$ in integration by parts prioritizes: \n1. **L** - Logarithmic functions (e.g., $\\ln(x)$)\n2. **I** - Inverse trigonometric functions (e.g., $\\arctan x$) \n3. **A** - Algebraic functions (e.g., $x^n$)\n4. **T** - Trigonometric functions (e.g., $\\sin(x)$, $\\cos(x)$) \n5. **E** - Exponential functions (e.g., $e^x$)  [Doc ID 2]",
-      "retrieval_time_sec": 0.029689788818359375,
-      "generation_time_sec": 13.813688278198242,
+      "retrieval_time_sec": 0.02425837516784668,
+      "generation_time_sec": 14.241853952407837,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "Explain how to evaluate the integral of x * e^x.",
       "ground_truth": "Using integration by parts with u = x and dv = e^x dx. This yields du = dx and v = e^x, giving the solution x*e^x - e^x + C.",
-      "generated_answer": "To evaluate the integral of $x*e^x$, use integration by parts. \n1. Let $u = x$ and $dv = e^x \\, dx$.  \n2. Then, $du = dx$ and $v = e^x$.\n3. Apply the integration by parts formula: $\\int u \\, dv = uv - \\int v \\, du$.\n4. Evaluate the remaining integral: $\\int x e^x \\, dx = x e^x - \\int e^x \\, dx = e^x(x-1) + C$",
-      "retrieval_time_sec": 0.031636714935302734,
-      "generation_time_sec": 15.013742446899414,
+      "generated_answer": "To evaluate the integral of  $x*e^x$, use integration by parts. \n1. Let $u = x$ and $dv = e^x \\, dx$. \n2. Then, $du = dx$ and $v = e^x$.\n3. Apply the integration by parts formula: $\\int u \\, dv = uv - \\int v \\, du$.  \n4. Evaluate the remaining integral: $\\int x e^x \\, dx = x e^x - \\int e^x \\, dx = e^x(x-1) + C$",
+      "retrieval_time_sec": 0.021605730056762695,
+      "generation_time_sec": 12.631386041641235,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "What is the result of evaluating the definite integral of sin(x) from 0 to pi?",
       "ground_truth": "The antiderivative of sin(x) is -cos(x). Evaluated from 0 to pi, it equals -cos(pi) - (-cos(0)) = -(-1) - (-1) = 2.",
       "generated_answer": "The definite integral of sin(x) from 0 to \u03c0 is 2. [Doc ID 1]",
-      "retrieval_time_sec": 0.02101612091064453,
-      "generation_time_sec": 6.974937677383423,
+      "retrieval_time_sec": 0.08360767364501953,
+      "generation_time_sec": 7.079667091369629,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "How do you integrate 2x * cos(x^2)?",
       "ground_truth": "Using u-substitution. Let u = x^2, du = 2x dx. The integral becomes the integral of cos(u) du, which is sin(u) + C = sin(x^2) + C.",
       "generated_answer": "You can use integration by substitution to solve this integral.  Let $u = x^2$, then $du = 2x \\, dx$. The integral becomes $\\int \\cos(u) \\, du = \\sin(u) + C$. Substitute back: $\\sin(x^2) + C$. [Doc ID 1]",
-      "retrieval_time_sec": 0.04170632362365723,
-      "generation_time_sec": 11.885848760604858,
+      "retrieval_time_sec": 0.02488112449645996,
+      "generation_time_sec": 10.124587297439575,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "What is the LIATE rule used for?",
       "ground_truth": "The LIATE rule is a priority guide (Logarithmic, Inverse trig, Algebraic, Trigonometric, Exponential) used to choose the function 'u' in integration by parts.",
       "generated_answer": "The LIATE rule is used for choosing $u$ in integration by parts.  It prioritizes functions based on their order of difficulty to integrate. [Doc ID 2]",
-      "retrieval_time_sec": 0.01792430877685547,
-      "generation_time_sec": 9.769496202468872,
+      "retrieval_time_sec": 0.02236485481262207,
+      "generation_time_sec": 7.8322460651397705,
       "scores": {
-        "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "faithfulness": 5.0,
+        "relevance": 5.0,
+        "correctness": 5.0
       }
     },
     {
       "question": "Who is the President of France?",
       "ground_truth": "Not present in the documents. System should say: 'I am sorry, but the provided documents do not contain the information required to answer this question.'",
       "generated_answer": "I am sorry, but the provided documents do not contain the information required to answer this question.",
-      "retrieval_time_sec": 0.015950918197631836,
-      "generation_time_sec": 6.374212980270386,
+      "retrieval_time_sec": 0.022260427474975586,
+      "generation_time_sec": 6.047321557998657,
       "scores": {
         "faithfulness": 1.0,
-        "relevance": 1.0,
-        "correctness": 1.0
+        "relevance": 2.0,
+        "correctness": 3.0
       }
     }
   ]
