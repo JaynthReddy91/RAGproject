@@ -79,11 +79,21 @@ class VectorStoreManager:
         ids = [chunk.metadata.get("chunk_id") for chunk in chunked_docs]
         # Verify if all IDs are unique and present
         if len(ids) == len(chunked_docs) and all(ids):
+            try:
+                # Retrieve list of matching IDs that already exist
+                existing_data = self.vector_store.get(ids=ids, include=[])
+                existing_ids = existing_data.get("ids", [])
+                if existing_ids:
+                    print(f"Detected {len(existing_ids)} existing chunks in vector store. Deleting them to perform updates...")
+                    self.vector_store.delete(ids=existing_ids)
+            except Exception as e:
+                print(f"Error performing duplicate check/delete: {e}. Proceeding with standard insert.")
+            
             self.vector_store.add_documents(documents=lc_docs, ids=ids)
         else:
             ids = self.vector_store.add_documents(documents=lc_docs)
             
-        print(f"Successfully added {len(lc_docs)} chunks to the vector store.")
+        print(f"Successfully indexed/updated {len(lc_docs)} chunks in the vector store.")
         return ids
 
     def search_similarity(self, query: str, k: int = 5) -> List[LCDocument]:

@@ -1,3 +1,4 @@
+import re
 from typing import List, Dict, Any, Optional
 from langchain_core.documents import Document as LCDocument
 from langchain_community.retrievers import BM25Retriever
@@ -5,6 +6,19 @@ from langchain_classic.retrievers import EnsembleRetriever
 
 from src.config import Settings
 from src.vectorstore import VectorStoreManager
+
+def math_tokenizer(text: str) -> List[str]:
+    """
+    A custom tokenizer for mathematical content.
+    Extracts words, LaTeX commands, operations (+, -, *, /, ^, =),
+    and mathematical variables/terms instead of stripping punctuation.
+    """
+    if not text:
+        return []
+    # Pattern extracts LaTeX macros, variables/equations, operators, and words
+    pattern = r'\\[a-zA-Z]+|\b\d*[a-zA-Z](?:\^[a-zA-Z0-9]+)?\b|[\+\-\*/\^=]|\b\w+\b'
+    tokens = re.findall(pattern, text)
+    return [t.lower() if not t.startswith('\\') else t for t in tokens]
 
 class HybridRetrieverManager:
     def __init__(self, vector_store_manager: VectorStoreManager):
@@ -56,7 +70,7 @@ class HybridRetrieverManager:
             
         # 2. Build BM25 retriever
         try:
-            self.bm25_retriever = BM25Retriever.from_documents(lc_docs)
+            self.bm25_retriever = BM25Retriever.from_documents(lc_docs, preprocess_func=math_tokenizer)
             self.bm25_retriever.k = Settings.TOP_K_RETRIEVAL
         except Exception as e:
             print(f"Error creating BM25 retriever: {e}")
@@ -123,7 +137,7 @@ class HybridRetrieverManager:
 
         # 2. Build filtered BM25 retriever
         try:
-            dynamic_bm25 = BM25Retriever.from_documents(lc_docs)
+            dynamic_bm25 = BM25Retriever.from_documents(lc_docs, preprocess_func=math_tokenizer)
             dynamic_bm25.k = min(Settings.TOP_K_RETRIEVAL, len(lc_docs))
         except Exception as e:
             print(f"Error creating dynamic BM25 retriever: {e}")

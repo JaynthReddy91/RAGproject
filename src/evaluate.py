@@ -67,6 +67,35 @@ class RAGEvaluator:
         self.retriever = retriever_manager
         self.generator = generator_manager
         self.llm = generator_manager.llm
+        self.judge_llm = self._init_judge_llm()
+
+    def _init_judge_llm(self):
+        """Initializes a separate high-parameter model as evaluation judge if keys exist."""
+        if Settings.GEMINI_API_KEY:
+            try:
+                from langchain_google_genai import ChatGoogleGenerativeAI
+                print("Initializing separate high-IQ Gemini API model as the evaluation judge...")
+                return ChatGoogleGenerativeAI(
+                    google_api_key=Settings.GEMINI_API_KEY,
+                    model="gemini-1.5-flash",
+                    temperature=0.0
+                )
+            except Exception as e:
+                print(f"Error initializing Gemini judge: {e}. Falling back to generator LLM.")
+        elif Settings.OPENAI_API_KEY:
+            try:
+                from langchain_openai import ChatOpenAI
+                print("Initializing separate high-IQ OpenAI API model as the evaluation judge...")
+                return ChatOpenAI(
+                    openai_api_key=Settings.OPENAI_API_KEY,
+                    model="gpt-4o-mini",
+                    temperature=0.0
+                )
+            except Exception as e:
+                print(f"Error initializing OpenAI judge: {e}. Falling back to generator LLM.")
+        
+        print("No cloud API keys detected. Falling back to local generator model as judge (note: potential self-grading bias).")
+        return self.llm
 
     def evaluate_llm_as_judge(self, question: str, context: str, answer: str, ground_truth: str) -> Dict[str, float]:
         """
@@ -96,7 +125,7 @@ Format your output EXACTLY as this JSON block (do not return any other text or m
 }}
 """
         try:
-            response = self.llm.invoke([
+            response = self.judge_llm.invoke([
                 SystemMessage(content="You are a strict, objective quality control evaluator. Always output clean JSON."),
                 HumanMessage(content=judge_prompt)
             ])
