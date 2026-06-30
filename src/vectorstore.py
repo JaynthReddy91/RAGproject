@@ -44,6 +44,17 @@ class VectorStoreManager:
             )
         else:
             # Fallback to local HuggingFace embeddings
+            from pathlib import Path
+            from src.config import BASE_DIR
+            
+            # Resolve relative local paths to absolute paths
+            local_path = Path(model_name)
+            if local_path.exists():
+                model_name = str(local_path.resolve())
+            elif (BASE_DIR / local_path).exists():
+                model_name = str((BASE_DIR / local_path).resolve())
+                
+            print(f"Loading local SentenceTransformer model: '{model_name}'")
             return HuggingFaceEmbeddings(
                 model_name=model_name,
                 model_kwargs={'device': 'cpu'}
