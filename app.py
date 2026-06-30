@@ -24,13 +24,13 @@ CUSTOM_CSS = """
     /* Overall App Background & Font Override */
     html, body, [class*="css"], .stApp {
         font-family: 'Outfit', sans-serif;
-        background: linear-gradient(135deg, #0d0e15 0%, #151828 50%, #0a0b0e 100%) !important;
-        color: #e2e8f0;
+        background: linear-gradient(135deg, #060c09 0%, #0d1f16 50%, #040806 100%) !important;
+        color: #f8fafc;
     }
     
     /* Header styling */
     .app-title {
-        background: linear-gradient(90deg, #a78bfa 0%, #38bdf8 100%);
+        background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         font-weight: 700;
@@ -40,28 +40,29 @@ CUSTOM_CSS = """
     }
     
     .app-subtitle {
-        color: #94a3b8;
+        color: #a7f3d0;
         font-size: 1.1rem;
         margin-bottom: 2rem;
         text-align: left;
+        opacity: 0.85;
     }
     
     /* Glassmorphism containers */
     .glass-card {
-        background: rgba(30, 41, 59, 0.4);
+        background: rgba(16, 37, 27, 0.4);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(16, 185, 129, 0.15);
         border-radius: 12px;
         padding: 1.5rem;
         margin-bottom: 1rem;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
     
     /* Citation Card layout */
     .citation-header {
         font-weight: 600;
-        color: #38bdf8;
+        color: #34d399;
         font-size: 0.95rem;
         margin-bottom: 0.4rem;
         display: flex;
@@ -71,10 +72,10 @@ CUSTOM_CSS = """
     
     .citation-body {
         font-size: 0.85rem;
-        color: #cbd5e1;
-        background: rgba(15, 23, 42, 0.5);
+        color: #e2e8f0;
+        background: rgba(8, 18, 13, 0.6);
         padding: 0.75rem;
-        border-left: 3px solid #8b5cf6;
+        border-left: 3px solid #10b981;
         border-radius: 4px;
         margin-top: 0.25rem;
         line-height: 1.4;
@@ -82,26 +83,26 @@ CUSTOM_CSS = """
     
     /* Custom Sidebar styling */
     [data-testid="stSidebar"] {
-        background-color: rgba(15, 23, 42, 0.95) !important;
-        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        background-color: rgba(6, 15, 11, 0.96) !important;
+        border-right: 1px solid rgba(16, 185, 129, 0.15);
     }
     
     /* Buttons customization */
     .stButton>button {
-        background: linear-gradient(135deg, #6d28d9 0%, #4f46e5 100%) !important;
+        background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
         color: white !important;
         border: none !important;
         padding: 0.6rem 1.5rem !important;
         border-radius: 8px !important;
         font-weight: 600 !important;
         transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(109, 40, 217, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3) !important;
     }
     
     .stButton>button:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(109, 40, 217, 0.5) !important;
-        background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5) !important;
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
     }
     
     /* Badges */
@@ -114,14 +115,14 @@ CUSTOM_CSS = """
         margin-right: 0.5rem;
     }
     .badge-primary {
-        background-color: rgba(139, 92, 246, 0.2);
-        color: #c084fc;
-        border: 1px solid rgba(139, 92, 246, 0.4);
+        background-color: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
     }
     .badge-secondary {
-        background-color: rgba(56, 189, 248, 0.2);
-        color: #7dd3fc;
-        border: 1px solid rgba(56, 189, 248, 0.4);
+        background-color: rgba(52, 211, 153, 0.15);
+        color: #a7f3d0;
+        border: 1px solid rgba(52, 211, 153, 0.3);
     }
 </style>
 """
@@ -155,7 +156,7 @@ chunker: TextChunker = st.session_state.chunker
 
 # --- SIDEBAR: Settings & Document Management ---
 with st.sidebar:
-    st.markdown("<h2 style='color: #a78bfa; margin-bottom: 0.5rem;'> INTIG RAG</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: #10b981; margin-bottom: 0.5rem;'> INTIG RAG</h2>", unsafe_allow_html=True)
     st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;'>Interactive Document Intelligence Pipeline</p>", unsafe_allow_html=True)
     
     st.divider()

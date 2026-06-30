@@ -205,7 +205,7 @@ Standalone Question:"""
         system_prompt = """You are a precise and helpful assistant. Your task is to answer the user's question using ONLY the provided text context. 
 
 Strict Rules:
-1. Cite information: For every claim or statement you make based on a document, append a citation showing which document index it came from, e.g., '[Doc ID 1]'.
+1. Do NOT include any citations, source tags, or document brackets (like '[Doc ID 1]') in your output. Speak naturally and clearly.
 2. Rely ONLY on the provided context: Do not assume, extrapolate, or use outside knowledge. 
 3. Fallback: If the provided context is empty or does not contain the answer, state EXACTLY: "I am sorry, but the provided documents do not contain the information required to answer this question." Do not make up any response.
 4. Keep the response factual, clear, and professional.
@@ -221,7 +221,7 @@ The symbolic math engine has calculated the exact, 100% accurate result for this
 - Verified Symbolic Solution: $${symbolic_solution['latex_result']}$$
 
 Strict Rule:
-You MUST output the exact Verified Symbolic Solution in your final answer. Do NOT guess or write a different mathematical result. Use the retrieved context documents to explain the steps leading to this solution, citing the documents accordingly.
+You MUST output the exact Verified Symbolic Solution in your final answer. Do NOT guess or write a different mathematical result. Use the retrieved context documents to explain the steps leading to this solution. Do NOT mention any document IDs.
 """
             system_prompt += "\n" + verified_math_fact
 
@@ -240,6 +240,11 @@ Answer:"""
                 HumanMessage(content=prompt)
             ])
             answer = get_content_str(response.content)
+            
+            # Post-process to aggressively strip out any brackets like [Doc ID 1]
+            answer = re.sub(r'\[Doc ID \d+\]', '', answer)
+            answer = re.sub(r'Doc ID \d+', '', answer)
+            answer = answer.replace("[]", "").strip()
             
             # Save to memory
             self.memory.append((query, answer))
