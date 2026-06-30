@@ -15,6 +15,9 @@ DATA_DIR.mkdir(parents=True, exist_ok=True)
 DB_DIR.mkdir(parents=True, exist_ok=True)
 
 class Settings:
+    BASE_DIR = BASE_DIR
+    DATA_DIR = DATA_DIR
+    
     # LLM Settings
     LLM_PROVIDER = os.getenv("LLM_PROVIDER", "gemini").lower()
     OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
