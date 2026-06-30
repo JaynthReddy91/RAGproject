@@ -270,11 +270,12 @@ with st.sidebar:
         st.rerun()
 
 # --- MAIN CHAT AREA ---
-st.markdown("<h1 class='app-title'>⚡ AI</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='app-title'>⚡ INTIGRAGR AI</h1>", unsafe_allow_html=True)
 st.markdown("<p class='app-subtitle'>Retrieval-Augmented Intelligent Knowledge Assistant</p>", unsafe_allow_html=True)
 
 # Main container for Chat
 chat_container = st.container()
+
 
 # Render Chat History
 with chat_container:
