@@ -1,4 +1,5 @@
-from typing import List, Dict, Any, Tuple
+import re
+from typing import List, Dict, Any, Tuple, Optional
 from langchain_core.documents import Document as LCDocument
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
 from langchain_openai import ChatOpenAI
@@ -120,6 +121,81 @@ Standalone Question:"""
             )
         return "\n\n".join(context_parts)
 
+    def solve_math_symbolically(self, query: str) -> Optional[Dict[str, Any]]:
+        """
+        Attempts to solve integration queries symbolically using SymPy.
+        Returns a dictionary containing the solution details, or None if it fails
+        or is not an integration query.
+        """
+        keywords = ["integrate", "integral", "antiderivative", "antidifferentiate", "\\int"]
+        is_math = any(kw in query.lower() for kw in keywords) or "dx" in query.lower()
+        if not is_math:
+            return None
+            
+        try:
+            import sympy
+            from sympy import Symbol, integrate, latex
+            from sympy.parsing.sympy_parser import parse_expr, standard_transformations, implicit_multiplication_application, convert_xor
+            
+            # Extract expression and bounds
+            expr_clean = re.sub(
+                r'^(integrate|evaluate|find|determine|antiderivative of|integral of|the integral of|what is the integral of|what is the antiderivative of)\s+',
+                '', query, flags=re.IGNORECASE
+            )
+            # Check for definite bounds: e.g. "from 0 to pi"
+            bounds_match = re.search(
+                r'from\s+([a-zA-Z0-9_\*/\+\-\.\s]+)\s+to\s+([a-zA-Z0-9_\*/\+\-\.\s]+)', 
+                expr_clean, flags=re.IGNORECASE
+            )
+            
+            # Strip bounds text and 'dx' from expression
+            expr_clean = re.sub(r'\s+from\s+.*$', '', expr_clean, flags=re.IGNORECASE)
+            expr_clean = re.sub(r'\s+dx$', '', expr_clean, flags=re.IGNORECASE)
+            expr_clean = expr_clean.strip()
+            
+            # Apply trig replacements (e.g. sinx -> sin(x))
+            for func in ['sin', 'cos', 'tan', 'exp', 'log', 'ln', 'sec', 'csc', 'cot']:
+                expr_clean = re.sub(rf'\b{func}\s*([a-zA-Z0-9]+)\b', rf'{func}(\1)', expr_clean)
+                expr_clean = re.sub(rf'\b{func}\s*\(', rf'{func}(', expr_clean)
+            
+            # Replace e^x or e**x with exp(x)
+            expr_clean = re.sub(r'\be\^([a-zA-Z0-9]+)\b', r'exp(\1)', expr_clean)
+            expr_clean = re.sub(r'\be\*\*([a-zA-Z0-9]+)\b', r'exp(\1)', expr_clean)
+            
+            # Parse symbolic variables
+            x = Symbol('x')
+            transformations = (standard_transformations + (implicit_multiplication_application, convert_xor))
+            parsed_expr = parse_expr(expr_clean, local_dict={'x': x, 'pi': sympy.pi, 'e': sympy.E}, transformations=transformations)
+            
+            # Integrate
+            if bounds_match:
+                lower_str = bounds_match.group(1).strip()
+                upper_str = bounds_match.group(2).strip()
+                lower_val = parse_expr(lower_str, local_dict={'pi': sympy.pi, 'e': sympy.E}, transformations=transformations)
+                upper_val = parse_expr(upper_str, local_dict={'pi': sympy.pi, 'e': sympy.E}, transformations=transformations)
+                
+                result = integrate(parsed_expr, (x, lower_val, upper_val))
+                latex_expr = f"\\int_{{{latex(lower_val)}}}^{{{latex(upper_val)}}} {latex(parsed_expr)} \\, dx"
+                latex_result = latex(result)
+                is_definite = True
+            else:
+                result = integrate(parsed_expr, x)
+                latex_expr = f"\\int {latex(parsed_expr)} \\, dx"
+                # Add constant of integration for indefinite integral
+                latex_result = f"{latex(result)} + C"
+                is_definite = False
+                
+            return {
+                "expr": str(parsed_expr),
+                "result": str(result),
+                "latex_expr": latex_expr,
+                "latex_result": latex_result,
+                "is_definite": is_definite
+            }
+        except Exception as e:
+            print(f"SymPy symbolic calculation failed or skipped: {e}")
+            return None
+
     def generate_response(self, query: str, docs: List[LCDocument]) -> Dict[str, Any]:
         """
         Generates an answer based on the retrieved documents and updates the conversational memory.
@@ -134,6 +210,20 @@ Strict Rules:
 3. Fallback: If the provided context is empty or does not contain the answer, state EXACTLY: "I am sorry, but the provided documents do not contain the information required to answer this question." Do not make up any response.
 4. Keep the response factual, clear, and professional.
 """
+
+        # Check if SymPy can solve it symbolically
+        symbolic_solution = self.solve_math_symbolically(query)
+        if symbolic_solution:
+            verified_math_fact = f"""
+VERIFIED MATHEMATICAL CALCULATION:
+The symbolic math engine has calculated the exact, 100% accurate result for this query:
+- Integral Equation: $${symbolic_solution['latex_expr']}$$
+- Verified Symbolic Solution: $${symbolic_solution['latex_result']}$$
+
+Strict Rule:
+You MUST output the exact Verified Symbolic Solution in your final answer. Do NOT guess or write a different mathematical result. Use the retrieved context documents to explain the steps leading to this solution, citing the documents accordingly.
+"""
+            system_prompt += "\n" + verified_math_fact
 
         prompt = f"""Context documents:
 {context_str}

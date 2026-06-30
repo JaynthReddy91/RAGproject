@@ -155,7 +155,7 @@ chunker: TextChunker = st.session_state.chunker
 
 # --- SIDEBAR: Settings & Document Management ---
 with st.sidebar:
-    st.markdown("<h2 style='color: #a78bfa; margin-bottom: 0.5rem;'>⚡ Kortex RAG</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: #a78bfa; margin-bottom: 0.5rem;'> INTIG RAG</h2>", unsafe_allow_html=True)
     st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;'>Interactive Document Intelligence Pipeline</p>", unsafe_allow_html=True)
     
     st.divider()
@@ -270,7 +270,7 @@ with st.sidebar:
         st.rerun()
 
 # --- MAIN CHAT AREA ---
-st.markdown("<h1 class='app-title'>⚡ KORTEX AI</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='app-title'>⚡ AI</h1>", unsafe_allow_html=True)
 st.markdown("<p class='app-subtitle'>Retrieval-Augmented Intelligent Knowledge Assistant</p>", unsafe_allow_html=True)
 
 # Main container for Chat
