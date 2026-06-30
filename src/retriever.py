@@ -100,14 +100,36 @@ class HybridRetrieverManager:
             print("Vector store is empty. Hybrid retrievers not initialized yet.")
             return []
 
-        # If no specific source filters are applied, use the cached ensemble retriever
+        # Determine dynamic query routing weights based on math syntax presence
+        math_operators = ['+', '-', '*', '/', '^', '=', '\\int', 'dx', 'sin', 'cos', 'tan', 'log', 'ln']
+        is_math = any(op in query.lower() for op in math_operators)
+        
+        # Math queries prioritize syntax (BM25: 0.7, Vector: 0.3)
+        # Plain text queries prioritize semantics (BM25: 0.3, Vector: 0.7)
+        weights = [0.7, 0.3] if is_math else [0.3, 0.7]
+        print(f"Dynamic query routing: Math query detected? {is_math}. Applying weights -> BM25: {weights[0]} / Vector: {weights[1]}")
+
+        # If no specific source filters are applied, build a dynamic ensemble from cached retrievers
         if not filter_sources:
-            if not self.ensemble_retriever:
+            if not self.bm25_retriever:
                 self.refresh_retrievers()
-            if not self.ensemble_retriever:
-                print("No retrievers initialized. Returning empty results.")
-                return []
-            return self.ensemble_retriever.invoke(query)
+            if not self.bm25_retriever:
+                vector_retriever = store.as_retriever(
+                    search_type="similarity",
+                    search_kwargs={"k": Settings.TOP_K_RETRIEVAL}
+                )
+                return vector_retriever.invoke(query)
+                
+            vector_retriever = store.as_retriever(
+                search_type="similarity",
+                search_kwargs={"k": Settings.TOP_K_RETRIEVAL}
+            )
+            
+            dynamic_ensemble = EnsembleRetriever(
+                retrievers=[self.bm25_retriever, vector_retriever],
+                weights=weights
+            )
+            return dynamic_ensemble.invoke(query)
 
         # Build dynamic retriever with metadata filters
         print(f"Applying database-level source filters: {filter_sources}")
@@ -152,11 +174,11 @@ class HybridRetrieverManager:
             }
         )
 
-        # 4. Assemble dynamic Ensemble Retriever
+        # 4. Assemble dynamic Ensemble Retriever with routing weights
         if dynamic_bm25:
             dynamic_ensemble = EnsembleRetriever(
                 retrievers=[dynamic_bm25, vector_retriever],
-                weights=[0.5, 0.5]
+                weights=weights
             )
         else:
             dynamic_ensemble = vector_retriever
