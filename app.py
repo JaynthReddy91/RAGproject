@@ -156,17 +156,8 @@ chunker: TextChunker = st.session_state.chunker
 
 # --- SIDEBAR: Settings & Document Management ---
 with st.sidebar:
-    st.markdown("<h2 style='color: #10b981; margin-bottom: 0.5rem;'> INTIG RAG</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;'>Interactive Document Intelligence Pipeline</p>", unsafe_allow_html=True)
-    
-    st.divider()
-    
-    # Pipeline Settings Status
-    st.subheader("System Status")
-    st.markdown(f"<span class='badge badge-primary'>LLM: {Settings.LLM_PROVIDER} ({Settings.LLM_MODEL})</span>", unsafe_allow_html=True)
-    st.markdown(f"<span class='badge badge-secondary'>Embeddings: {Settings.EMBEDDING_PROVIDER}</span>", unsafe_allow_html=True)
-    
-    st.markdown(f"**Indexed chunks:** {vsm.get_document_count()}")
+    st.markdown("<h2 style='color: #10b981; margin-bottom: 0.5rem;'> Document Vault</h2>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;'>Upload and search your mathematical references</p>", unsafe_allow_html=True)
     
     st.divider()
     
@@ -194,11 +185,8 @@ with st.sidebar:
                 
                 # Chunk document
                 with st.spinner(f"Chunking {uploaded_file.name}..."):
-                    # We can use recursive or semantic. Let's use recursive by default, semantic as an option
-                    chunk_method = st.session_state.get("sel_chunk_method", "recursive")
-                    
-                    # If semantic, we pass our vector store's embedding model
-                    emb_model = vsm.embedding_model if chunk_method == "semantic" else None
+                    chunk_method = "recursive"
+                    emb_model = None
                     chunked_docs = chunker.chunk_documents(
                         loaded_docs,
                         method=chunk_method,
@@ -215,18 +203,6 @@ with st.sidebar:
             retriever.refresh_retrievers()
             st.success(f"Indexed successfully! Added {new_chunks_count} chunks.")
             st.rerun()
-
-    # Settings configurations
-    st.subheader("Chunking Strategy")
-    st.selectbox(
-        "Split Method",
-        options=["recursive", "semantic", "fixed"],
-        key="sel_chunk_method",
-        index=0,
-        help="Recursive is recommended for general docs. Semantic uses sentence embedding similarity splits."
-    )
-    
-    st.divider()
     
     # Document Filtering
     st.subheader("Knowledge Filters")

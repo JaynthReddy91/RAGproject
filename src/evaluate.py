@@ -157,67 +157,79 @@ Format your output EXACTLY as this JSON block (do not return any other text or m
             print(f"Error parsing judge scores: {e}. Defaulting to 1.0.")
             return {"faithfulness": 1.0, "relevance": 1.0, "correctness": 1.0}
 
-    def run_evaluations(self) -> Dict[str, Any]:
-        """Runs the test dataset through the pipeline and calculates summary statistics."""
-        results = []
+    def evaluate_single_item(self, idx: int, item: Dict[str, str]) -> Dict[str, Any]:
+        """Runs the RAG pipeline for a single question and evaluates it."""
+        question = item["question"]
+        gt = item["ground_truth"]
         
-        total_retrieval_time = 0.0
-        total_generation_time = 0.0
+        # 1. Benchmark Retrieval
+        start_ret = time.time()
+        retrieved_docs = self.retriever.retrieve(question)
+        ret_time = time.time() - start_ret
         
-        print(f"Starting evaluation of {len(EVAL_DATASET)} Q&A pairs...")
+        # 2. Benchmark Generation (using thread-local memory to avoid races)
+        start_gen = time.time()
+        self.generator.clear_memory()
+        response_data = self.generator.generate_response(question, retrieved_docs)
+        gen_time = time.time() - start_gen
         
-        for idx, item in enumerate(EVAL_DATASET):
-            question = item["question"]
-            gt = item["ground_truth"]
-            
-            print(f"\n[{idx+1}/{len(EVAL_DATASET)}] Question: {question}")
-            
-            # 1. Benchmark Retrieval
-            start_ret = time.time()
-            retrieved_docs = self.retriever.retrieve(question)
-            ret_time = time.time() - start_ret
-            total_retrieval_time += ret_time
-            
-            # 2. Benchmark Generation
-            start_gen = time.time()
-            # Disable memory for individual testing
-            self.generator.clear_memory()
-            response_data = self.generator.generate_response(question, retrieved_docs)
-            gen_time = time.time() - start_gen
-            total_generation_time += gen_time
-            
-            answer = response_data["answer"]
-            context = response_data["context_used"]
-            
-            # 3. Judge scores
-            scores = self.evaluate_llm_as_judge(question, context, answer, gt)
-            
-            result = {
-                "question": question,
-                "ground_truth": gt,
-                "generated_answer": answer,
-                "retrieval_time_sec": ret_time,
-                "generation_time_sec": gen_time,
-                "scores": scores
-            }
-            results.append(result)
-            
-            print(f"  Retrieval: {ret_time:.2f}s | Generation: {gen_time:.2f}s")
-            print(f"  Scores -> Faithfulness: {scores['faithfulness']}/5 | Relevance: {scores['relevance']}/5 | Correctness: {scores['correctness']}/5")
-            
-            # Sleep to respect free tier rate limits (15 RPM)
-            time.sleep(4)
+        answer = response_data["answer"]
+        context = response_data["context_used"]
+        
+        # 3. Judge scores
+        scores = self.evaluate_llm_as_judge(question, context, answer, gt)
+        
+        print(f"\n[{idx+1}/{len(EVAL_DATASET)}] Completed: {question}")
+        print(f"  Retrieval: {ret_time:.2f}s | Generation: {gen_time:.2f}s")
+        print(f"  Scores -> Faithfulness: {scores['faithfulness']}/5 | Relevance: {scores['relevance']}/5 | Correctness: {scores['correctness']}/5")
+        
+        # Sleep to respect rate limits
+        time.sleep(2)
+        
+        return {
+            "question": question,
+            "ground_truth": gt,
+            "generated_answer": answer,
+            "retrieval_time_sec": ret_time,
+            "generation_time_sec": gen_time,
+            "scores": scores
+        }
 
+    def run_evaluations(self) -> Dict[str, Any]:
+        """Runs the test dataset through the pipeline in parallel and calculates summary statistics."""
+        from concurrent.futures import ThreadPoolExecutor
+        
+        max_workers = 2
+        print(f"Starting parallel evaluation of {len(EVAL_DATASET)} Q&A pairs (max_workers={max_workers})...")
+        
+        results = []
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Map index and item to thread workers
+            futures = [executor.submit(self.evaluate_single_item, idx, item) for idx, item in enumerate(EVAL_DATASET)]
+            # Collect results as they complete
+            for fut in futures:
+                try:
+                    results.append(fut.result())
+                except Exception as e:
+                    print(f"Error evaluating test case: {e}")
+                    
+        if not results:
+            print("No evaluation results were recorded.")
+            return {}
+            
         # Compile summaries
-        avg_ret_time = total_retrieval_time / len(EVAL_DATASET)
-        avg_gen_time = total_generation_time / len(EVAL_DATASET)
+        total_retrieval_time = sum(r["retrieval_time_sec"] for r in results)
+        total_generation_time = sum(r["generation_time_sec"] for r in results)
+        
+        avg_ret_time = total_retrieval_time / len(results)
+        avg_gen_time = total_generation_time / len(results)
         
         avg_faithfulness = sum(r["scores"]["faithfulness"] for r in results) / len(results)
         avg_relevance = sum(r["scores"]["relevance"] for r in results) / len(results)
         avg_correctness = sum(r["scores"]["correctness"] for r in results) / len(results)
         
         summary = {
-            "total_questions": len(EVAL_DATASET),
+            "total_questions": len(results),
             "averages": {
                 "retrieval_latency_sec": avg_ret_time,
                 "generation_latency_sec": avg_gen_time,

@@ -1,4 +1,5 @@
 import re
+import threading
 from typing import List, Dict, Any, Tuple, Optional
 from langchain_core.documents import Document as LCDocument
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
@@ -24,8 +25,18 @@ def get_content_str(content) -> str:
 class GeneratorManager:
     def __init__(self):
         self.llm = self._init_llm()
-        self.memory: List[Tuple[str, str]] = [] # Simple memory stored as a list of (human, ai) pairs
+        self._local = threading.local()
         self.memory_limit = 5 # Keep last 5 exchanges
+
+    @property
+    def memory(self) -> List[Tuple[str, str]]:
+        if not hasattr(self._local, "memory"):
+            self._local.memory = []
+        return self._local.memory
+
+    @memory.setter
+    def memory(self, value: List[Tuple[str, str]]):
+        self._local.memory = value
 
     def _init_llm(self):
         """Initializes the Chat LLM based on Settings configurations."""
